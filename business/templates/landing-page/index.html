@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu Empresa de Desarrollo Web</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#" class="nav-logo">Dev<span class="accent">Studio</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#portafolio">Portafolio</a></li>
+        <li><a href="#testimonios">Testimonios</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="#contacto" class="btn btn-primary btn-sm">Cotización Gratis</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="hero">
+    <div class="container hero-content">
+      <div class="hero-badge">🚀 Soluciones digitales a medida</div>
+      <h1 class="hero-title">Transformamos ideas en <span class="gradient-text">experiencias digitales</span> que impulsan tu negocio</h1>
+      <p class="hero-subtitle">Diseñamos y desarrollamos sitios web modernos, rápidos y optimizados para convertir visitantes en clientes.</p>
+      <div class="hero-actions">
+        <a href="#contacto" class="btn btn-primary btn-lg">Solicitar Cotización</a>
+        <a href="#portafolio" class="btn btn-outline btn-lg">Ver Proyectos</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number" data-target="150">0</span><span class="stat-plus">+</span>
+          <span class="stat-label">Proyectos Entregados</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="98">0</span><span class="stat-plus">%</span>
+          <span class="stat-label">Clientes Satisfechos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="8">0</span><span class="stat-plus">+</span>
+          <span class="stat-label">Años de Experiencia</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-gradient"></div>
+  </header>
+
+  <!-- Servicios -->
+  <section class="section" id="servicios">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-subtitle">Ofrecemos soluciones completas para presencia digital de tu empresa</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card service-card">
+          <div class="card-icon">🎨</div>
+          <h3 class="card-title">Diseño Web</h3>
+          <p class="card-text">Interfaces modernas y atractivas centradas en la experiencia del usuario y la identidad de tu marca.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+        <div class="card service-card">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title">Desarrollo Frontend</h3>
+          <p class="card-text">Sitios web interactivos y de alto rendimiento con las tecnologías más actuales del mercado.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+        <div class="card service-card">
+          <div class="card-icon">🔧</div>
+          <h3 class="card-title">Desarrollo Backend</h3>
+          <p class="card-text">APIs robustas, bases de datos escalables y sistemas administrativos a medida.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+        <div class="card service-card">
+          <div class="card-icon">📱</div>
+          <h3 class="card-title">Apps Móviles</h3>
+          <p class="card-text">Aplicaciones nativas e híbridas para iOS y Android que conectan con tu audiencia.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+        <div class="card service-card">
+          <div class="card-icon">🔍</div>
+          <h3 class="card-title">SEO & Marketing</h3>
+          <p class="card-text">Optimización para buscadores y estrategias digitales para aumentar tu visibilidad online.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+        <div class="card service-card">
+          <div class="card-icon">☁️</div>
+          <h3 class="card-title">Hosting & Cloud</h3>
+          <p class="card-text">Infraestructura en la nube, dominios, certificados SSL y soporte técnico continuo.</p>
+          <a href="#contacto" class="card-link">Más información →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portafolio -->
+  <section class="section section-dark" id="portafolio">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nuestro Portafolio</h2>
+        <p class="section-subtitle">Proyectos recientes que reflejan nuestra calidad y compromiso</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card portfolio-card">
+          <div class="portfolio-img" style="background-color:#1e293b;">
+            <span class="portfolio-overlay">Ver Proyecto</span>
+          </div>
+          <div class="card-body">
+            <span class="badge">E-commerce</span>
+            <h3 class="card-title">Tienda Online Modular</h3>
+            <p class="card-text">Plataforma de ventas con pasarela de pago, panel de administración y logística integrada.</p>
+          </div>
+        </div>
+        <div class="card portfolio-card">
+          <div class="portfolio-img" style="background-color:#1e293b;">
+            <span class="portfolio-overlay">Ver Proyecto</span>
+          </div>
+          <div class="card-body">
+            <span class="badge">SaaS</span>
+            <h3 class="card-title">App de Gestión de Citas</h3>
+            <p class="card-text">Sistema de reservas online con calendario, notificaciones y panel para profesionales.</p>
+          </div>
+        </div>
+        <div class="card portfolio-card">
+          <div class="portfolio-img" style="background-color:#1e293b;">
+            <span class="portfolio-overlay">Ver Proyecto</span>
+          </div>
+          <div class="card-body">
+            <span class="badge">Corporativo</span>
+            <h3 class="card-title">Portal Corporativo</h3>
+            <p class="card-text">Sitio institucional con blog, intranet y sistema de gestión de contenido personalizado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section class="section" id="testimonios">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+        <p class="section-subtitle">La satisfacción de nuestros clientes es nuestra mejor carta de presentación</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="card-text">"Superaron nuestras expectativas. El sitio quedó profesional, rápido y nos ha generado muchos más clientes desde su lanzamiento."</p>
+          <div class="testimonial-author">
+            <div class="avatar">MR</div>
+            <div>
+              <strong>María Rodríguez</strong>
+              <span>CEO, Moda Express</span>
+            </div>
+          </div>
+        </div>
+        <div class="card testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="card-text">"El equipo es muy profesional y cumple con los tiempos. Nuestra app móvil ha simplificado la gestión de citas de todo nuestro equipo."</p>
+          <div class="testimonial-author">
+            <div class="avatar">CL</div>
+            <div>
+              <strong>Carlos López</strong>
+              <span>Director, Salud Integral</span>
+            </div>
+          </div>
+        </div>
+        <div class="card testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="card-text">"Excelente trabajo en SEO. En 3 meses triplicamos el tráfico orgánico de nuestra web. Muy recomendados para cualquier proyecto digital."</p>
+          <div class="testimonial-author">
+            <div class="avatar">AG</div>
+            <div>
+              <strong>Ana García</strong>
+              <span>Gerente, Constructora Horizonte</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section class="section section-dark" id="contacto">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Contáctanos</h2>
+        <p class="section-subtitle">Cuéntanos sobre tu proyecto y te responderemos en menos de 24 horas</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div>
+              <strong>Correo Electrónico</strong>
+              <p>hola@devstudio.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📱</span>
+            <div>
+              <strong>Teléfono / WhatsApp</strong>
+              <p>+52 (55) 1234-5678</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div>
+              <strong>Ubicación</strong>
+              <p>Ciudad de México, México</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">🕐</span>
+            <div>
+              <strong>Horario</strong>
+              <p>Lunes a Viernes, 9:00 – 18:00</p>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Correo</label>
+              <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="servicio">Servicio de Interés</label>
+            <select id="servicio" name="servicio" required>
+              <option value="" disabled selected>Selecciona un servicio</option>
+              <option value="diseno">Diseño Web</option>
+              <option value="frontend">Desarrollo Frontend</option>
+              <option value="backend">Desarrollo Backend</option>
+              <option value="mobile">Apps Móviles</option>
+              <option value="seo">SEO & Marketing</option>
+              <option value="hosting">Hosting & Cloud</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="5" placeholder="Cuéntanos sobre tu proyecto..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Enviar Mensaje</button>
+          <div class="form-message" id="formMessage"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Dev<span class="accent">Studio</span></a>
+        <p>Transformamos ideas en experiencias digitales desde 2016.</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Servicios</h4>
+          <a href="#servicios">Diseño Web</a>
+          <a href="#servicios">Desarrollo</a>
+          <a href="#servicios">SEO</a>
+        </div>
+        <div>
+          <h4>Empresa</h4>
+          <a href="#portafolio">Portafolio</a>
+          <a href="#testimonios">Testimonios</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="#">Privacidad</a>
+          <a href="#">Términos</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 DevStudio. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

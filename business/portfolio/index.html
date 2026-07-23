@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStudio | Desarrollador Web Freelancer</title>
+    <meta name="description" content="Desarrollador web freelancer especializado en crear experiencias digitales modernas, rápidas y responsivas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">&lt;DevStudio /&gt;</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menú">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#hero" class="nav-link">Inicio</a></li>
+                <li><a href="#about" class="nav-link">Sobre Mí</a></li>
+                <li><a href="#services" class="nav-link">Servicios</a></li>
+                <li><a href="#projects" class="nav-link">Proyectos</a></li>
+                <li><a href="#contact" class="nav-link">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="hero" class="hero">
+        <div class="hero-bg">
+            <div class="grid-overlay"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge" data-animate="fade-up">Disponible para proyectos</div>
+            <h1 data-animate="fade-up" data-delay="100">
+                Creo experiencias<br>
+                <span class="gradient-text">digitales memorables</span>
+            </h1>
+            <p class="hero-subtitle" data-animate="fade-up" data-delay="200">
+                Desarrollador web full-stack con pasión por el código limpio,<br>
+                el diseño intuitivo y las soluciones que generan impacto.
+            </p>
+            <div class="hero-cta" data-animate="fade-up" data-delay="300">
+                <a href="#projects" class="btn btn-primary">Ver Proyectos</a>
+                <a href="#contact" class="btn btn-outline">Hablemos</a>
+            </div>
+            <div class="hero-stats" data-animate="fade-up" data-delay="400">
+                <div class="stat">
+                    <span class="stat-number" data-count="50">0</span>+
+                    <span class="stat-label">Proyectos</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number" data-count="35">0</span>+
+                    <span class="stat-label">Clientes</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number" data-count="5">0</span>+
+                    <span class="stat-label">Años Exp.</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator" data-animate="fade-up" data-delay="600">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <section id="about" class="section about">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-tag">Sobre Mí</span>
+                <h2>Conoce mi historia y <span class="gradient-text">metodología</span></h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-image" data-animate="fade-right">
+                    <div class="about-image-wrapper">
+                        <div class="about-image-placeholder">
+                            <span>&lt;/&gt;</span>
+                        </div>
+                        <div class="about-image-decoration"></div>
+                    </div>
+                </div>
+                <div class="about-content" data-animate="fade-left">
+                    <h3>Hola, soy Carlos — desarrollador web apasionado</h3>
+                    <p>
+                        Con más de 5 años de experiencia en desarrollo web, me especializo en crear 
+                        soluciones digitales que combinan diseño elegante con rendimiento excepcional. 
+                        Mi enfoque se centra en entender las necesidades del cliente para entregar 
+                        productos que superan expectativas.
+                    </p>
+                    <p>
+                        Trabajo con las tecnologías más modernas del mercado y me mantengo en 
+                        constante actualización para ofrecer siempre lo mejor a mis clientes.
+                    </p>
+                    <div class="about-highlights">
+                        <div class="highlight">
+                            <div class="highlight-icon">⚡</div>
+                            <div>
+                                <strong>Rendimiento</strong>
+                                <span>Sitios rápidos y optimizados</span>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <div class="highlight-icon">📱</div>
+                            <div>
+                                <strong>Responsive</strong>
+                                <span>Perfecto en cualquier dispositivo</span>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <div class="highlight-icon">🔒</div>
+                            <div>
+                                <strong>Seguridad</strong>
+                                <span>Buenas prácticas de desarrollo</span>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <div class="highlight-icon">🎯</div>
+                            <div>
+                                <strong>SEO</strong>
+                                <span>Optimizado para buscadores</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section services">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-tag">Servicios</span>
+                <h2>Soluciones completas para tu <span class="gradient-text">presencia digital</span></h2>
+            </div>
+            <div class="services-grid" id="servicesGrid">
+                <div class="service-card" data-animate="fade-up" data-delay="0">
+                    <div class="service-icon">🌐</div>
+                    <h3>Desarrollo Web</h3>
+                    <p>Sitios web modernos, rápidos y responsivos con las últimas tecnologías como React, Vue y Node.js.</p>
+                    <ul class="service-features">
+                        <li>Landing pages</li>
+                        <li>Sitios corporativos</li>
+                        <li>Aplicaciones web</li>
+                    </ul>
+                </div>
+                <div class="service-card featured" data-animate="fade-up" data-delay="100">
+                    <div class="service-badge">Popular</div>
+                    <div class="service-icon">🛒</div>
+                    <h3>E-Commerce</h3>
+                    <p>Tiendas online completas con pasarelas de pago, gestión de inventario y panel de administración.</p>
+                    <ul class="service-features">
+                        <li>Carrito de compras</li>
+                        <li>Pagos seguros</li>
+                        <li>Gestión de productos</li>
+                    </ul>
+                </div>
+                <div class="service-card" data-animate="fade-up" data-delay="200">
+                    <div class="service-icon">📱</div>
+                    <h3>Apps Móviles</h3>
+                    <p>Aplicaciones móviles nativas e híbridas con React Native y Flutter para iOS y Android.</p>
+                    <ul class="service-features">
+                        <li>iOS y Android</li>
+                        <li>UI/UX nativo</li>
+                        <li>Publicación en stores</li>
+                    </ul>
+                </div>
+                <div class="service-card" data-animate="fade-up" data-delay="300">
+                    <div class="service-icon">🎨</div>
+                    <h3>Diseño UI/UX</h3>
+                    <p>Diseño de interfaces intuitivas y atractivas centradas en la experiencia del usuario.</p>
+                    <ul class="service-features">
+                        <li>Prototipos interactivos</li>
+                        <li>Design systems</li>
+                        <li>Investigación de usuarios</li>
+                    </ul>
+                </div>
+                <div class="service-card" data-animate="fade-up" data-delay="400">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Backend & APIs</h3>
+                    <p>Desarrollo de APIs robustas, microservicios y arquitecturas escalables en la nube.</p>
+                    <ul class="service-features">
+                        <li>REST y GraphQL</li>
+                        <li>Bases de datos</li>
+                        <li>Cloud computing</li>
+                    </ul>
+                </div>
+                <div class="service-card" data-animate="fade-up" data-delay="500">
+                    <div class="service-icon">🚀</div>
+                    <h3>Mantenimiento</h3>
+                    <p>Servicio de mantenimiento, actualización y soporte técnico para sitios y aplicaciones existentes.</p>
+                    <ul class="service-features">
+                        <li>Monitoreo 24/7</li>
+                        <li>Actualizaciones</li>
+                        <li>Soporte técnico</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section projects">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-tag">Proyectos</span>
+                <h2>Trabajos recientes que <span class="gradient-text">hablan por sí solos</span></h2>
+            </div>
+            <div class="project-filters" data-animate="fade-up">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="web">Web</button>
+                <button class="filter-btn" data-filter="ecommerce">E-Commerce</button>
+                <button class="filter-btn" data-filter="mobile">Móvil</button>
+                <button class="filter-btn" data-filter="saas">SaaS</button>
+            </div>
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Proyectos cargados dinámicamente desde projects.json -->
+            </div>
+            <div class="projects-cta" data-animate="fade-up">
+                <p>¿Quieres ver más de mi trabajo?</p>
+                <a href="#contact" class="btn btn-primary">Contáctame para más ejemplos</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="section testimonials">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-tag">Testimonios</span>
+                <h2>Lo que dicen mis <span class="gradient-text">clientes</span></h2>
+            </div>
+            <div class="testimonials-slider" id="testimonialsSlider">
+                <div class="testimonial-card" data-animate="fade-up">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p>"Carlos transformó nuestra idea en una plataforma increíble. Su profesionalismo y atención al detalle son excepcionales. El proyecto se entregó antes de tiempo y superó nuestras expectativas."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div>
+                            <strong>María Rodríguez</strong>
+                            <span>CEO, TechStart</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card" data-animate="fade-up" data-delay="100">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p>"Nuestra tienda online aumentó las ventas un 200% después del rediseño. Carlos no solo es un excelente desarrollador, sino que entiende de negocios y UX. Totalmente recomendado."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AL</div>
+                        <div>
+                            <strong>Andrés López</strong>
+                            <span>Fundador, ShopMax</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card" data-animate="fade-up" data-delay="200">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p>"El mejor desarrollador con el que hemos trabajado. Su capacidad para resolver problemas complejos y entregar soluciones elegantes es impresionante. Ya es nuestro desarrollador fijo."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LG</div>
+                        <div>
+                            <strong>Laura García</strong>
+                            <span>Directora, InnovaLab</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-tag">Contacto</span>
+                <h2>¿Tienes un proyecto en mente? <span class="gradient-text">Hablemos</span></h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info" data-animate="fade-right">
+                    <h3>Información de contacto</h3>
+                    <p>Estoy disponible para proyectos freelance, colaboraciones y consultoría. Respuesta garantizada en menos de 24 horas.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <div>
+                                <strong>Email</strong>
+                                <a href="mailto:hola@devstudio.com">hola@devstudio.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📱</span>
+                            <div>
+                                <strong>Teléfono</strong>
+                                <a href="tel:+525512345678">+52 55 1234 5678</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <div>
+                                <strong>Ubicación</strong>
+                                <span>Ciudad de México, México</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕐</span>
+                            <div>
+                                <strong>Horario</strong>
+                                <span>Lun - Vie: 9:00 - 18:00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="GitHub">GH</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">LI</a>
+                        <a href="#" class="social-link" aria-label="Twitter">TW</a>
+                        <a href="#" class="social-link" aria-label="Dribbble">DR</a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm" data-animate="fade-left">
+                    <div class="form-group">
+                        <label for="name">Nombre completo</label>
+                        <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+52 55 0000 0000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="service">Servicio de interés</label>
+                        <select id="service" name="service" required>
+                            <option value="" disabled selected>Selecciona un servicio</option>
+                            <option value="web">Desarrollo Web</option>
+                            <option value="ecommerce">E-Commerce</option>
+                            <option value="mobile">Apps Móviles</option>
+                            <option value="design">Diseño UI/UX</option>
+                            <option value="backend">Backend & APIs</option>
+                            <option value="maintenance">Mantenimiento</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Presupuesto estimado</label>
+                        <select id="budget" name="budget">
+                            <option value="" disabled selected>Rango de presupuesto</option>
+                            <option value="small">Menos de $5,000 USD</option>
+                            <option value="medium">$5,000 - $15,000 USD</option>
+                            <option value="large">$15,000 - $50,000 USD</option>
+                            <option value="enterprise">Más de $50,000 USD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Cuéntame sobre tu proyecto</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, objetivos y cualquier detalle relevante..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span class="btn-text">Enviar Mensaje</span>
+                        <span class="btn-loading">Enviando...</span>
+                        <span class="btn-success">¡Mensaje Enviado!</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo">&lt;DevStudio /&gt;</a>
+                    <p>Creando experiencias digitales excepcionales desde Ciudad de México.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navegación</h4>
+                        <a href="#about">Sobre Mí</a>
+                        <a href="#services">Servicios</a>
+                        <a href="#projects">Proyectos</a>
+                        <a href="#contact">Contacto</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Servicios</h4>
+                        <a href="#services">Desarrollo Web</a>
+                        <a href="#services">E-Commerce</a>
+                        <a href="#services">Apps Móviles</a>
+                        <a href="#services">UI/UX Design</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DevStudio. Todos los derechos reservados.</p>
+                <p>Hecho con ♥ y mucho ☕</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
