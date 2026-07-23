@@ -1,3 +1,10 @@
+// ============================================
+// RUTAS DE CANCIONES (SET LIST)
+// Módulo: Songs
+// Responsabilidad: CRUD de canciones, historial de cambios, notificación de tono
+// Escalabilidad: Historial de cambios, notificaciones automáticas
+// ============================================
+
 import express from 'express';
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
@@ -5,7 +12,13 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 
+// ============================================
 // GET /songs/:serviceId
+// ============================================
+// Qué: Lista el set list de un servicio
+// Conecta:
+//   - Output: Array de songs ordenados por order
+//   - Frontend: mobile/src/screens/SongsScreen.tsx
 router.get('/:serviceId', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const songs = await prisma.song.findMany({
@@ -21,12 +34,19 @@ router.get('/:serviceId', authenticate, async (req: AuthRequest, res: express.Re
   }
 });
 
+// ============================================
 // POST /songs/:serviceId
+// ============================================
+// Qué: Agrega una canción al set list
+// Cómo: Auto-incrementa order → crea canción
+// Conecta:
+//   - Input: { title, key, lyricsUrl, sheetMusicUrl, youtubeLink }
+//   - Output: Song creada
 router.post('/:serviceId', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const { title, key, lyricsUrl, sheetMusicUrl, youtubeLink } = req.body;
 
-    // Get next order number
+    // Calcula siguiente orden
     const lastSong = await prisma.song.findFirst({
       where: { serviceId: req.params.serviceId },
       orderBy: { order: 'desc' }
@@ -52,12 +72,20 @@ router.post('/:serviceId', authenticate, async (req: AuthRequest, res: express.R
   }
 });
 
+// ============================================
 // PATCH /songs/:id
+// ============================================
+// Qué: Actualiza una canción (tono, letra, partitura, link)
+// Cómo: Registra cambio en historial → notifica si cambió el tono
+// Conecta:
+//   - Input: { title, order, key, lyricsUrl, sheetMusicUrl, youtubeLink }
+//   - Historial: SongHistory si cambia key
+//   - Notificación: A músicos si cambia tono
 router.patch('/:id', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const { title, order, key, lyricsUrl, sheetMusicUrl, youtubeLink } = req.body;
 
-    // Get current song for history
+    // Obtiene canción actual para comparar
     const currentSong = await prisma.song.findUnique({ where: { id: req.params.id } });
 
     const song = await prisma.song.update({
@@ -73,7 +101,8 @@ router.patch('/:id', authenticate, async (req: AuthRequest, res: express.Respons
       }
     });
 
-    // Record history for key changes
+    // Registra cambio de tono en historial
+    // Conecta: Con schema.prisma (model SongHistory)
     if (key && currentSong && key !== currentSong.key) {
       await prisma.songHistory.create({
         data: {
@@ -85,7 +114,7 @@ router.patch('/:id', authenticate, async (req: AuthRequest, res: express.Respons
         }
       });
 
-      // Notify musicians
+      // Notifica a músicos del ministerio de Alabanza
       const service = await prisma.service.findUnique({
         where: { id: song.serviceId },
         include: { team: { include: { user: true } } }
@@ -116,7 +145,11 @@ router.patch('/:id', authenticate, async (req: AuthRequest, res: express.Respons
   }
 });
 
+// ============================================
 // GET /songs/:id/history
+// ============================================
+// Qué: Historial de cambios de una canción
+// Conecta: Con SongHistory.modifiedBy → User
 router.get('/:id/history', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const history = await prisma.songHistory.findMany({
@@ -132,7 +165,10 @@ router.get('/:id/history', authenticate, async (req: AuthRequest, res: express.R
   }
 });
 
+// ============================================
 // DELETE /songs/:id
+// ============================================
+// Qué: Elimina una canción del set list
 router.delete('/:id', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     await prisma.song.delete({ where: { id: req.params.id } });

@@ -1,3 +1,10 @@
+// ============================================
+// RUTAS DE MINISTERIOS Y ROLES
+// Módulo: Ministries
+// Responsabilidad: CRUD de ministerios y roles configurables
+// Escalabilidad: Roles dinámicos (no hardcodeados), activar/desactivar sin eliminar
+// ============================================
+
 import express from 'express';
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
@@ -5,14 +12,22 @@ import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 
+// ============================================
 // GET /ministries
+// ============================================
+// Qué: Lista todos los ministerios activos con sus roles
+// Cómo: Filtra por isActive=true, incluye roles y conteo de personas
+// Conecta:
+//   - Output: Array de ministry con roles y _count
+//   - Frontend: mobile/src/screens/TeamScreen.tsx, ServiceDetailScreen.tsx
+//   - Escalabilidad: Ministerios editables sin tocar código
 router.get('/', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const ministries = await prisma.ministry.findMany({
-      where: { isActive: true },
+      where: { isActive: true },  // Solo ministerios activos
       include: {
-        roles: { where: { isActive: true } },
-        _count: { select: { userMinistryRoles: true } }
+        roles: { where: { isActive: true } },  // Roles activos de cada ministerio
+        _count: { select: { userMinistryRoles: true } }  // Cuántas personas tiene
       }
     });
     res.json(ministries);
@@ -21,7 +36,11 @@ router.get('/', authenticate, async (req: AuthRequest, res: express.Response) =>
   }
 });
 
+// ============================================
 // POST /ministries
+// ============================================
+// Qué: Crea un nuevo ministerio
+// Conecta: Security: Solo admin
 router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { name } = req.body;
@@ -32,7 +51,11 @@ router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: expre
   }
 });
 
+// ============================================
 // PATCH /ministries/:id
+// ============================================
+// Qué: Actualiza nombre o estado de un ministerio
+// Escalabilidad: Puede desactivar sin eliminar (mantiene historial)
 router.patch('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { name, isActive } = req.body;
@@ -46,7 +69,14 @@ router.patch('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: e
   }
 });
 
+// ============================================
 // GET /ministries/:id/roles
+// ============================================
+// Qué: Lista los roles de un ministerio específico
+// Conecta:
+//   - Input: ministryId (parámetro URL)
+//   - Output: Array de MinistryRole
+//   - Frontend: Formulario de asignación de equipo
 router.get('/:id/roles', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const roles = await prisma.ministryRole.findMany({
@@ -58,7 +88,12 @@ router.get('/:id/roles', authenticate, async (req: AuthRequest, res: express.Res
   }
 });
 
+// ============================================
 // POST /ministries/:id/roles
+// ============================================
+// Qué: Crea un rol dentro de un ministerio
+// Ejemplo: En "Alabanza" crear rol "Batería"
+// Conecta: Con MinistryRole.ministryId → Ministry.id
 router.post('/:id/roles', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { name } = req.body;
@@ -71,7 +106,11 @@ router.post('/:id/roles', authenticate, requireAdmin, async (req: AuthRequest, r
   }
 });
 
-// PATCH /ministry-roles/:id
+// ============================================
+// PATCH /ministries/roles/:id
+// ============================================
+// Qué: Actualiza o desactiva un rol
+// Escalabilidad: Desactivar rol no elimina asignaciones existentes
 router.patch('/roles/:id', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { name, isActive } = req.body;

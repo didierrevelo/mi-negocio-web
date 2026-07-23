@@ -1,14 +1,46 @@
+// ============================================
+// PANTALLA: LOGIN
+// ============================================
+// Qué: Formulario de autenticación
+// Cómo: Valida credenciales → obtiene token → guarda en storage → navega a Home
+// Conecta: Con api.ts (authAPI.login), con AsyncStorage, con AppNavigator
+// Seguridad: Token JWT, rate limiting en backend
+
 import React, { useState } from 'react';
+
+// React Native components
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+
+// AsyncStorage: Almacenamiento local persistente
+// Conecta: Con api.ts (guarda token), con ProfileScreen (lee usuario)
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// authAPI: Servicio de autenticación
+// Conecta: Con routes/auth.ts (POST /auth/login)
 import { authAPI } from '../services/api';
 
 export default function LoginScreen({ navigation }: any) {
+  // ============================================
+  // ESTADOS
+  // ============================================
+  
+  // Email del usuario
   const [email, setEmail] = useState('');
+  
+  // Contraseña del usuario
   const [password, setPassword] = useState('');
+  
+  // Estado de carga (muestra spinner)
   const [loading, setLoading] = useState(false);
 
+  // ============================================
+  // FUNCIÓN: handleLogin
+  // ============================================
+  // Qué: Valida credenciales y navega a Home
+  // Cómo: Llama a API → guarda token → limpia storage → navega
+  // Conecta: Con authAPI.login(), con AsyncStorage, con navigation
   const handleLogin = async () => {
+    // Validación básica
     if (!email || !password) {
       Alert.alert('Error', 'Por favor ingresa email y contraseña');
       return;
@@ -16,26 +48,42 @@ export default function LoginScreen({ navigation }: any) {
 
     setLoading(true);
     try {
+      // Llama al backend para autenticar
+      // Conecta: Con routes/auth.ts (POST /auth/login)
       const response = await authAPI.login(email, password);
+      
+      // Guarda token JWT en AsyncStorage
+      // Seguridad: Token se usa en cada request (api.ts interceptor)
       await AsyncStorage.setItem('token', response.data.token);
+      
+      // Guarda datos del usuario (sin password)
       await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Navega a Home y limpia el historial (no puede volver con back)
       navigation.replace('Home');
     } catch (error: any) {
+      // Muestra error al usuario
       Alert.alert('Error', error.response?.data?.error || 'Credenciales inválidas');
     } finally {
       setLoading(false);
     }
   };
 
+  // ============================================
+  // RENDER
+  // ============================================
   return (
     <View style={styles.container}>
+      {/* Header con logo y título */}
       <View style={styles.header}>
         <Text style={styles.logo}>⛪</Text>
         <Text style={styles.title}>Church Planning</Text>
         <Text style={styles.subtitle}>Gestiona tus servicios</Text>
       </View>
 
+      {/* Formulario de login */}
       <View style={styles.form}>
+        {/* Campo de email */}
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -44,18 +92,21 @@ export default function LoginScreen({ navigation }: any) {
           keyboardType="email-address"
           autoCapitalize="none"
         />
+        
+        {/* Campo de contraseña */}
         <TextInput
           style={styles.input}
           placeholder="Contraseña"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
+          secureTextEntry  // Oculta caracteres
         />
         
+        {/* Botón de login */}
         <TouchableOpacity 
           style={styles.button} 
           onPress={handleLogin}
-          disabled={loading}
+          disabled={loading}  // Deshabilita mientras carga
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -68,6 +119,10 @@ export default function LoginScreen({ navigation }: any) {
   );
 }
 
+// ============================================
+// ESTILOS
+// ============================================
+// Qué: Estilos CSS-in-JS para React Native
 const styles = StyleSheet.create({
   container: {
     flex: 1,

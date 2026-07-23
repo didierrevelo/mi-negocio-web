@@ -1,76 +1,146 @@
+// ============================================
+// PANTALLA: MI EQUIPO
+// ============================================
+// Qué: Lista de miembros del equipo asignados a servicios del usuario
+// Carga miembros del API → renderiza en FlatList → permite filtrar por estado
+// Conecta: Con api.ts (teamAPI), con ServiceDetailScreen
+// Filtros: Todos, Confirmados, Pendientes
+
 import React, { useState, useEffect } from 'react';
+
+// React Native components
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+
+// Ionicons: Iconos vectoriales
 import { Ionicons } from '@expo/vector-icons';
+
+// teamAPI: Servicio de equipo
+// Conecta: Con routes/team.ts (GET /team)
 import { teamAPI } from '../services/api';
+
+// ServiceTeamMember: Tipo TypeScript para miembros del equipo
+// Conecta: Con types/index.ts
 import { ServiceTeamMember } from '../types';
 
 export default function TeamScreen({ navigation }: any) {
+  // ============================================
+  // ESTADOS
+  // ============================================
+  
+  // Lista de miembros del equipo
   const [members, setMembers] = useState<ServiceTeamMember[]>([]);
+  
+  // Filtro activo: 'all', 'confirmed', 'pending'
   const [filter, setFilter] = useState('all');
 
+  // ============================================
+  // EFECTO: Cargar miembros al montar
+  // ============================================
   useEffect(() => {
     loadMembers();
   }, []);
 
+  // ============================================
+  // FUNCIÓN: loadMembers
+  // ============================================
+  // Qué: Carga miembros del equipo del usuario actual
+  // Conecta: Con teamAPI.getAll() → routes/team.ts (GET /team)
   const loadMembers = async () => {
-    // This would load team members from the current user's services
-    // For now, using mock data
-    setMembers([]);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return '#4CAF50';
-      case 'cannot_attend': return '#f44336';
-      case 'schedule_conflict': return '#FF9800';
-      default: return '#9E9E9E';
+    try {
+      const response = await teamAPI.getAll();
+      setMembers(response.data);
+    } catch (error) {
+      console.error('Error loading team members:', error);
     }
   };
 
+  // ============================================
+  // FUNCIONES DE UTILIDAD
+  // ============================================
+  
+  // Color del badge según estado
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed': return '#4CAF50';  // Verde: confirmado
+      case 'cannot_attend': return '#f44336';  // Rojo: no puede asistir
+      case 'schedule_conflict': return '#FF9800';  // Naranja: conflicto
+      default: return '#9E9E9E';  // Gris: pendiente
+    }
+  };
+
+  // Símbolo del estado
+  const getStatusSymbol = (status: string) => {
+    switch (status) {
+      case 'confirmed': return '✓';  // Confirmado
+      case 'cannot_attend': return '✗';  // No puede
+      default: return '?';  // Pendiente
+    }
+  };
+
+  // ============================================
+  // RENDER: Tarjeta de miembro
+  // ============================================
   const renderMember = ({ item }: { item: ServiceTeamMember }) => (
     <View style={styles.card}>
+      {/* Avatar con inicial del nombre */}
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>{item.user?.name?.charAt(0) || '?'}</Text>
       </View>
+      
+      {/* Información del miembro */}
       <View style={styles.info}>
         <Text style={styles.name}>{item.user?.name}</Text>
-        <Text style={styles.role}>{item.ministryRole?.name} • {item.ministry?.name}</Text>
-      </View>
-      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-        <Text style={styles.statusText}>
-          {item.status === 'confirmed' ? '✓' : item.status === 'cannot_attend' ? '✗' : '?'}
+        <Text style={styles.role}>
+          {item.ministryRole?.name} • {item.ministry?.name}
         </Text>
+      </View>
+      
+      {/* Badge de estado */}
+      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+        <Text style={styles.statusText}>{getStatusSymbol(item.status)}</Text>
       </View>
     </View>
   );
 
+  // ============================================
+  // RENDER: Pantalla principal
+  // ============================================
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Mi Equipo</Text>
       </View>
 
+      {/* Filtros de estado */}
       <View style={styles.filters}>
         <TouchableOpacity 
           style={[styles.filterBtn, filter === 'all' && styles.filterActive]}
           onPress={() => setFilter('all')}
         >
-          <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>Todos</Text>
+          <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
+            Todos
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.filterBtn, filter === 'confirmed' && styles.filterActive]}
           onPress={() => setFilter('confirmed')}
         >
-          <Text style={[styles.filterText, filter === 'confirmed' && styles.filterTextActive]}>Confirmados</Text>
+          <Text style={[styles.filterText, filter === 'confirmed' && styles.filterTextActive]}>
+            Confirmados
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.filterBtn, filter === 'pending' && styles.filterActive]}
           onPress={() => setFilter('pending')}
         >
-          <Text style={[styles.filterText, filter === 'pending' && styles.filterTextActive]}>Pendientes</Text>
+          <Text style={[styles.filterText, filter === 'pending' && styles.filterTextActive]}>
+            Pendientes
+          </Text>
         </TouchableOpacity>
       </View>
 
+      {/* Lista de miembros filtrados */}
       <FlatList
         data={members.filter(m => filter === 'all' || m.status === filter)}
         renderItem={renderMember}
@@ -87,6 +157,9 @@ export default function TeamScreen({ navigation }: any) {
   );
 }
 
+// ============================================
+// ESTILOS
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

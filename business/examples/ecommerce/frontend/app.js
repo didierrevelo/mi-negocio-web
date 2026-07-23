@@ -1,4 +1,14 @@
-// Products data
+// ============================================
+// APLICACIÓN PRINCIPAL - TECHSTORE (FRONTEND)
+// ============================================
+// Qué: Tienda de tecnología - SPA vanilla JavaScript
+// Funciones: Renderizar productos, carrito, filtros, búsqueda
+// Conecta: Con index.html (DOM), con backend/routes/products.ts (API)
+// Datos: Productos hardcodeados para demo
+
+// ============================================
+// DATOS: Productos de la tienda
+// ============================================
 const products = [
     {
         id: 1,
@@ -82,10 +92,14 @@ const products = [
     }
 ];
 
-// Cart state
+// ============================================
+// ESTADO: Carrito de compras
+// ============================================
 let cart = [];
 
-// DOM Elements
+// ============================================
+// ELEMENTOS DEL DOM
+// ============================================
 const productsGrid = document.getElementById('productsGrid');
 const cartBtn = document.getElementById('cartBtn');
 const cartModal = document.getElementById('cartModal');
@@ -98,13 +112,19 @@ const sortFilter = document.getElementById('sortFilter');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 
-// Initialize
+// ============================================
+// INICIALIZACIÓN
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
     setupEventListeners();
 });
 
-// Render products
+// ============================================
+// FUNCIÓN: renderProducts
+// ============================================
+// Qué: Renderiza la lista de productos en el grid
+// Recibe: Array de productos
 function renderProducts(productsToRender) {
     productsGrid.innerHTML = productsToRender.map(product => `
         <div class="product-card" data-id="${product.id}">
@@ -126,9 +146,12 @@ function renderProducts(productsToRender) {
     `).join('');
 }
 
-// Setup event listeners
+// ============================================
+// FUNCIÓN: setupEventListeners
+// ============================================
+// Qué: Configura todos los event listeners
 function setupEventListeners() {
-    // Add to cart buttons
+    // Botones de agregar al carrito
     productsGrid.addEventListener('click', (e) => {
         if (e.target.classList.contains('add-to-cart')) {
             const productId = parseInt(e.target.dataset.id);
@@ -136,7 +159,7 @@ function setupEventListeners() {
         }
     });
 
-    // Cart modal
+    // Modal del carrito
     cartBtn.addEventListener('click', () => {
         cartModal.classList.add('active');
     });
@@ -145,17 +168,17 @@ function setupEventListeners() {
         cartModal.classList.remove('active');
     });
 
-    // Filters
+    // Filtros
     categoryFilter.addEventListener('change', filterProducts);
     sortFilter.addEventListener('change', filterProducts);
 
-    // Search
+    // Búsqueda
     searchBtn.addEventListener('click', filterProducts);
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') filterProducts();
     });
 
-    // Category cards
+    // Tarjetas de categoría
     document.querySelectorAll('.category-card').forEach(card => {
         card.addEventListener('click', () => {
             const category = card.dataset.category;
@@ -165,25 +188,34 @@ function setupEventListeners() {
     });
 }
 
-// Add to cart
+// ============================================
+// FUNCIÓN: addToCart
+// ============================================
+// Qué: Agrega un producto al carrito
+// Si ya existe, incrementa la cantidad
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingItem = cart.find(item => item.id === productId);
 
     if (existingItem) {
-        existingItem.quantity++;
+        existingItem.quantity++;  // Incrementa cantidad
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ ...product, quantity: 1 });  // Agrega nuevo
     }
 
     updateCart();
     alert('Producto agregado al carrito');
 }
 
-// Update cart
+// ============================================
+// FUNCIÓN: updateCart
+// ============================================
+// Qué: Actualiza la vista del carrito
 function updateCart() {
+    // Actualiza contador
     cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
     
+    // Renderiza items
     cartItems.innerHTML = cart.length === 0 
         ? '<p style="text-align: center; padding: 2rem; color: var(--secondary);">Tu carrito está vacío</p>'
         : cart.map(item => `
@@ -202,40 +234,51 @@ function updateCart() {
             </div>
         `).join('');
 
+    // Actualiza total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = `$${total.toFixed(2)}`;
 }
 
-// Update quantity
+// ============================================
+// FUNCIÓN: updateQuantity
+// ============================================
+// Qué: Actualiza la cantidad de un item
+// change: +1 o -1
 function updateQuantity(productId, change) {
     const item = cart.find(item => item.id === productId);
     if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
-            removeFromCart(productId);
+            removeFromCart(productId);  // Elimina si cantidad <= 0
         } else {
             updateCart();
         }
     }
 }
 
-// Remove from cart
+// ============================================
+// FUNCIÓN: removeFromCart
+// ============================================
+// Qué: Elimina un item del carrito
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     updateCart();
 }
 
-// Filter products
+// ============================================
+// FUNCIÓN: filterProducts
+// ============================================
+// Qué: Filtra y ordena productos según selección del usuario
 function filterProducts() {
     let filtered = [...products];
     
-    // Category filter
+    // Filtro por categoría
     const category = categoryFilter.value;
     if (category !== 'all') {
         filtered = filtered.filter(p => p.category === category);
     }
     
-    // Search filter
+    // Filtro por búsqueda
     const search = searchInput.value.toLowerCase();
     if (search) {
         filtered = filtered.filter(p => 
@@ -244,7 +287,7 @@ function filterProducts() {
         );
     }
     
-    // Sort
+    // Ordenamiento
     const sort = sortFilter.value;
     switch (sort) {
         case 'price-low':

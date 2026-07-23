@@ -1,13 +1,50 @@
+// ============================================
+// PANTALLA: HOME (SERVICIOS)
+// ============================================
+// Qué: Lista de servicios próximos
+// Cómo: Carga servicios de la API → renderiza en FlatList → navega al detalle
+// Conecta: Con api.ts (servicesAPI), con ServiceDetailScreen
+// Escalabilidad: Pull-to-refresh, lazy loading
+
 import React, { useState, useEffect } from 'react';
+
+// React Native components
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
+
+// Ionicons: Iconos vectoriales
 import { Ionicons } from '@expo/vector-icons';
+
+// servicesAPI: Servicio de servicios
+// Conecta: Con routes/services.ts (GET /services)
 import { servicesAPI } from '../services/api';
+
+// Service: Tipo TypeScript para servicios
+// Conecta: Con types/index.ts
 import { Service } from '../types';
 
 export default function HomeScreen({ navigation }: any) {
+  // ============================================
+  // ESTADOS
+  // ============================================
+  
+  // Lista de servicios
   const [services, setServices] = useState<Service[]>([]);
+  
+  // Estado de pull-to-refresh
   const [refreshing, setRefreshing] = useState(false);
 
+  // ============================================
+  // EFECTO: Cargar servicios al montar
+  // ============================================
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  // ============================================
+  // FUNCIÓN: loadServices
+  // ============================================
+  // Qué: Carga servicios del backend
+  // Conecta: Con servicesAPI.getAll() → routes/services.ts
   const loadServices = async () => {
     try {
       const response = await servicesAPI.getAll();
@@ -17,25 +54,31 @@ export default function HomeScreen({ navigation }: any) {
     }
   };
 
-  useEffect(() => {
-    loadServices();
-  }, []);
-
+  // ============================================
+  // FUNCIÓN: onRefresh
+  // ============================================
+  // Qué: Pull-to-refresh
   const onRefresh = async () => {
     setRefreshing(true);
     await loadServices();
     setRefreshing(false);
   };
 
+  // ============================================
+  // FUNCIONES DE UTILIDAD
+  // ============================================
+  
+  // Color del badge de estado
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'planned': return '#FFA500';
-      case 'confirmed': return '#4CAF50';
-      case 'finished': return '#9E9E9E';
+      case 'planned': return '#FFA500';  // Naranja: planeado
+      case 'confirmed': return '#4CAF50';  // Verde: confirmado
+      case 'finished': return '#9E9E9E';  // Gris: finalizado
       default: return '#666';
     }
   };
 
+  // Texto del estado
   const getStatusText = (status: string) => {
     switch (status) {
       case 'planned': return 'Planificado';
@@ -45,16 +88,26 @@ export default function HomeScreen({ navigation }: any) {
     }
   };
 
+  // Formatea fecha ISO a legible
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return date.toLocaleDateString('es-ES', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
+  // ============================================
+  // RENDER: Tarjeta de servicio
+  // ============================================
   const renderService = ({ item }: { item: Service }) => (
     <TouchableOpacity 
       style={styles.card}
       onPress={() => navigation.navigate('ServiceDetail', { serviceId: item.id })}
     >
+      {/* Header: Título y estado */}
       <View style={styles.cardHeader}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
@@ -62,6 +115,7 @@ export default function HomeScreen({ navigation }: any) {
         </View>
       </View>
       
+      {/* Body: Fecha y hora */}
       <View style={styles.cardBody}>
         <View style={styles.infoRow}>
           <Ionicons name="calendar" size={16} color="#666" />
@@ -73,6 +127,7 @@ export default function HomeScreen({ navigation }: any) {
         </View>
       </View>
 
+      {/* Footer: Conteos */}
       <View style={styles.cardFooter}>
         <View style={styles.countItem}>
           <Ionicons name="people" size={14} color="#5B5EA6" />
@@ -90,18 +145,25 @@ export default function HomeScreen({ navigation }: any) {
     </TouchableOpacity>
   );
 
+  // ============================================
+  // RENDER: Pantalla principal
+  // ============================================
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Próximos Servicios</Text>
       </View>
 
+      {/* Lista de servicios con pull-to-refresh */}
       <FlatList
         data={services}
         renderItem={renderService}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="calendar-outline" size={64} color="#ccc" />
@@ -113,6 +175,9 @@ export default function HomeScreen({ navigation }: any) {
   );
 }
 
+// ============================================
+// ESTILOS
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

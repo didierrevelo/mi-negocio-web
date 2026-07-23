@@ -1,18 +1,49 @@
+// ============================================
+// PANTALLA: DETALLE DEL SERVICIO
+// ============================================
+// Qué: Muestra todo el detalle de un servicio: orden, equipo, songs, archivos
+// Cómo: Carga servicio por ID → renderiza secciones → permite actualizar estados
+// Conecta: Con api.ts (servicesAPI, teamAPI), con HomeScreen
+// Seguridad: Cada usuario ve solo lo que le corresponde
+
 import React, { useState, useEffect } from 'react';
+
+// React Native components
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+
+// Ionicons: Iconos vectoriales
 import { Ionicons } from '@expo/vector-icons';
+
+// API services
 import { servicesAPI, teamAPI } from '../services/api';
+
+// Types
 import { Service, ServiceTeamMember } from '../types';
 
 export default function ServiceDetailScreen({ route, navigation }: any) {
+  // ============================================
+  // PARÁMETROS
+  // ============================================
   const { serviceId } = route.params;
+
+  // ============================================
+  // ESTADOS
+  // ============================================
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ============================================
+  // EFECTO: Cargar servicio al montar
+  // ============================================
   useEffect(() => {
     loadService();
   }, []);
 
+  // ============================================
+  // FUNCIÓN: loadService
+  // ============================================
+  // Qué: Carga el servicio completo con todas sus relaciones
+  // Conecta: Con servicesAPI.getById() → routes/services.ts (GET /services/:id)
   const loadService = async () => {
     try {
       const response = await servicesAPI.getById(serviceId);
@@ -24,15 +55,27 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
     }
   };
 
+  // ============================================
+  // FUNCIÓN: handleStatusUpdate
+  // ============================================
+  // Qué: Actualiza el estado de un miembro del equipo
+  // Estados: pending → confirmed | cannot_attend | schedule_conflict
+  // Conecta: Con teamAPI.updateStatus() → routes/team.ts (PATCH /team/:id/status)
+  // Seguridad: Cada usuario solo puede actualizar su propio estado
   const handleStatusUpdate = async (memberId: string, status: string, note?: string) => {
     try {
       await teamAPI.updateStatus(memberId, { status, note });
-      loadService();
+      loadService();  // Recarga para ver cambios
     } catch (error) {
       Alert.alert('Error', 'No se pudo actualizar el estado');
     }
   };
 
+  // ============================================
+  // FUNCIONES DE UTILIDAD
+  // ============================================
+  
+  // Icono del estado
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'confirmed': return { name: 'checkmark-circle', color: '#4CAF50' };
@@ -42,6 +85,7 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
     }
   };
 
+  // Texto del estado
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed': return 'Confirmado';
@@ -51,6 +95,9 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
     }
   };
 
+  // ============================================
+  // RENDER: Loading
+  // ============================================
   if (loading || !service) {
     return (
       <View style={styles.loading}>
@@ -59,16 +106,19 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
     );
   }
 
+  // ============================================
+  // RENDER: Pantalla completa
+  // ============================================
   return (
     <ScrollView style={styles.container}>
-      {/* Service Header */}
+      {/* Header del servicio */}
       <View style={styles.header}>
         <Text style={styles.title}>{service.title}</Text>
         <Text style={styles.date}>{new Date(service.date).toLocaleDateString('es-ES')}</Text>
         <Text style={styles.time}>{service.time}</Text>
       </View>
 
-      {/* Order of Service */}
+      {/* Sección: Orden del culto */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Orden del Culto</Text>
         {service.segments?.map((segment, index) => (
@@ -89,7 +139,7 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
         ))}
       </View>
 
-      {/* Team by Ministry */}
+      {/* Sección: Equipo por ministerio */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Equipo</Text>
         {Object.entries(service.teamByMinistry || {}).map(([ministryName, data]) => (
@@ -109,6 +159,7 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
                       {getStatusText(member.status)}
                     </Text>
                   </View>
+                  {/* Botones de acción para pendientes */}
                   {member.status === 'pending' && (
                     <View style={styles.actionButtons}>
                       <TouchableOpacity 
@@ -132,7 +183,7 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
         ))}
       </View>
 
-      {/* Songs */}
+      {/* Sección: Set list */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Set List</Text>
         {service.songs?.map((song, index) => (
@@ -153,7 +204,7 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
         ))}
       </View>
 
-      {/* Files */}
+      {/* Sección: Archivos */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Archivos</Text>
         {service.files?.map((file) => (
@@ -172,6 +223,9 @@ export default function ServiceDetailScreen({ route, navigation }: any) {
   );
 }
 
+// ============================================
+// ESTILOS
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

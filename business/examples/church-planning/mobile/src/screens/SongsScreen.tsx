@@ -1,17 +1,50 @@
+// ============================================
+// PANTALLA: SET LIST (CANCIONES)
+// ============================================
+// Qué: Lista de canciones del set list de un servicio
+// Carga canciones por servicio → renderiza en FlatList → permite abrir YouTube/letras/partituras
+// Conecta: Con api.ts (songsAPI), con ServiceDetailScreen
+// Acciones: Ver en YouTube, ver letra, ver partitura
+
 import React, { useState, useEffect } from 'react';
+
+// React Native components
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+
+// Ionicons: Iconos vectoriales
 import { Ionicons } from '@expo/vector-icons';
+
+// songsAPI: Servicio de canciones
+// Conecta: Con routes/songs.ts (GET /songs/service/:serviceId)
 import { songsAPI } from '../services/api';
+
+// Song: Tipo TypeScript para canciones
+// Conecta: Con types/index.ts
 import { Song } from '../types';
 
 export default function SongsScreen({ navigation }: any) {
+  // ============================================
+  // ESTADOS
+  // ============================================
+  
+  // Lista de canciones del set list
   const [songs, setSongs] = useState<Song[]>([]);
+  
+  // Servicio seleccionado (para filtrar canciones)
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
+  // ============================================
+  // EFECTO: Cargar canciones cuando cambia el servicio
+  // ============================================
   useEffect(() => {
     loadSongs();
   }, [selectedService]);
 
+  // ============================================
+  // FUNCIÓN: loadSongs
+  // ============================================
+  // Qué: Carga canciones del set list de un servicio
+  // Conecta: Con songsAPI.getByService() → routes/songs.ts (GET /songs/service/:id)
   const loadSongs = async () => {
     if (!selectedService) {
       setSongs([]);
@@ -25,15 +58,25 @@ export default function SongsScreen({ navigation }: any) {
     }
   };
 
+  // ============================================
+  // FUNCIÓN: openYouTube
+  // ============================================
+  // Qué: Abre enlace de YouTube en navegador o app
   const openYouTube = (url: string) => {
     Linking.openURL(url);
   };
 
+  // ============================================
+  // RENDER: Tarjeta de canción
+  // ============================================
   const renderSong = ({ item, index }: { item: Song; index: number }) => (
     <View style={styles.card}>
+      {/* Número de orden */}
       <View style={styles.numberContainer}>
         <Text style={styles.number}>{index + 1}</Text>
       </View>
+      
+      {/* Información de la canción */}
       <View style={styles.info}>
         <Text style={styles.title}>{item.title}</Text>
         {item.key && <Text style={styles.key}>Tono: {item.key}</Text>}
@@ -41,7 +84,10 @@ export default function SongsScreen({ navigation }: any) {
           Actualizado por {item.updatedBy?.name || 'N/A'}
         </Text>
       </View>
+      
+      {/* Botones de acción */}
       <View style={styles.actions}>
+        {/* Botón YouTube: Abre enlace si existe */}
         {item.youtubeLink && (
           <TouchableOpacity 
             style={styles.actionBtn}
@@ -50,11 +96,13 @@ export default function SongsScreen({ navigation }: any) {
             <Ionicons name="logo-youtube" size={24} color="#FF0000" />
           </TouchableOpacity>
         )}
+        {/* Botón Letra: Abre documento */}
         {item.lyricsUrl && (
           <TouchableOpacity style={styles.actionBtn}>
             <Ionicons name="document-text" size={24} color="#5B5EA6" />
           </TouchableOpacity>
         )}
+        {/* Botón Partitura: Abre partitura */}
         {item.sheetMusicUrl && (
           <TouchableOpacity style={styles.actionBtn}>
             <Ionicons name="musical-notes" size={24} color="#4CAF50" />
@@ -64,12 +112,17 @@ export default function SongsScreen({ navigation }: any) {
     </View>
   );
 
+  // ============================================
+  // RENDER: Pantalla principal
+  // ============================================
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Set List</Text>
       </View>
 
+      {/* Vista condicional: Sin servicio seleccionado vs lista de canciones */}
       {!selectedService ? (
         <View style={styles.empty}>
           <Ionicons name="musical-notes-outline" size={64} color="#ccc" />
@@ -93,6 +146,9 @@ export default function SongsScreen({ navigation }: any) {
   );
 }
 
+// ============================================
+// ESTILOS
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,

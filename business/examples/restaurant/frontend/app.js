@@ -1,6 +1,18 @@
-// Menu data
+// ============================================
+// APLICACIÓN PRINCIPAL - LA CUCINA (FRONTEND)
+// ============================================
+// Qué: Restaurante italiano - SPA vanilla JavaScript
+// Funciones: Menú, carrito, reservaciones, filtros por categoría
+// Conecta: Con index.html (DOM), con backend/routes/menu.ts (API)
+// Datos: Menú hardcodeado para demo
+
+// ============================================
+// DATOS: Menú del restaurante
+// ============================================
 const menuItems = [
-    // Entradas
+    // ============================================
+    // ENTRADAS
+    // ============================================
     {
         id: 1,
         name: "Bruschetta Clásica",
@@ -28,7 +40,9 @@ const menuItems = [
         image: "🦑",
         tags: ["Popular"]
     },
-    // Pastas
+    // ============================================
+    // PASTAS
+    // ============================================
     {
         id: 4,
         name: "Spaghetti Carbonara",
@@ -56,7 +70,9 @@ const menuItems = [
         image: "🍝",
         tags: ["Vegetariano"]
     },
-    // Pizzas
+    // ============================================
+    // PIZZAS
+    // ============================================
     {
         id: 7,
         name: "Pizza Margherita",
@@ -84,7 +100,9 @@ const menuItems = [
         image: "🍕",
         tags: ["Vegetariano"]
     },
-    // Carnes
+    // ============================================
+    // CARNES
+    // ============================================
     {
         id: 10,
         name: "Ossobuco alla Milanese",
@@ -112,7 +130,9 @@ const menuItems = [
         image: "🥩",
         tags: ["Especialidad"]
     },
-    // Postres
+    // ============================================
+    // POSTRES
+    // ============================================
     {
         id: 13,
         name: "Tiramisú",
@@ -140,7 +160,9 @@ const menuItems = [
         image: "🥧",
         tags: ["Popular"]
     },
-    // Bebidas
+    // ============================================
+    // BEBIDAS
+    // ============================================
     {
         id: 16,
         name: "Vino Tinto della Casa",
@@ -170,10 +192,14 @@ const menuItems = [
     }
 ];
 
-// Cart state
+// ============================================
+// ESTADO: Carrito de pedidos
+// ============================================
 let cart = [];
 
-// DOM Elements
+// ============================================
+// ELEMENTOS DEL DOM
+// ============================================
 const menuGrid = document.getElementById('menuGrid');
 const cartBtn = document.getElementById('cartBtn');
 const cartSidebar = document.getElementById('cartSidebar');
@@ -186,13 +212,19 @@ const reservationForm = document.getElementById('reservationForm');
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.querySelector('.nav-links');
 
-// Initialize
+// ============================================
+// INICIALIZACIÓN
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    renderMenu('entradas');
+    renderMenu('entradas');  // Muestra entradas por defecto
     setupEventListeners();
 });
 
-// Render menu items
+// ============================================
+// FUNCIÓN: renderMenu
+// ============================================
+// Qué: Renderiza platos de una categoría específica
+// Recibe: Nombre de la categoría
 function renderMenu(category) {
     const filtered = menuItems.filter(item => item.category === category);
     menuGrid.innerHTML = filtered.map(item => `
@@ -213,9 +245,12 @@ function renderMenu(category) {
     `).join('');
 }
 
-// Setup event listeners
+// ============================================
+// FUNCIÓN: setupEventListeners
+// ============================================
+// Qué: Configura todos los event listeners
 function setupEventListeners() {
-    // Category buttons
+    // Botones de categoría
     menuCatBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             menuCatBtns.forEach(b => b.classList.remove('active'));
@@ -224,7 +259,7 @@ function setupEventListeners() {
         });
     });
 
-    // Add to order
+    // Agregar al pedido
     menuGrid.addEventListener('click', (e) => {
         if (e.target.classList.contains('add-to-order')) {
             const itemId = parseInt(e.target.dataset.id);
@@ -232,7 +267,7 @@ function setupEventListeners() {
         }
     });
 
-    // Cart sidebar
+    // Sidebar del carrito
     cartBtn.addEventListener('click', () => {
         cartSidebar.classList.add('active');
     });
@@ -241,34 +276,43 @@ function setupEventListeners() {
         cartSidebar.classList.remove('active');
     });
 
-    // Mobile menu
+    // Menú móvil
     mobileMenuBtn.addEventListener('click', () => {
         navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
     });
 
-    // Reservation form
+    // Formulario de reservación
     reservationForm.addEventListener('submit', handleReservation);
 }
 
-// Add to cart
+// ============================================
+// FUNCIÓN: addToCart
+// ============================================
+// Qué: Agrega un plato al carrito
+// Si ya existe, incrementa la cantidad
 function addToCart(itemId) {
     const item = menuItems.find(i => i.id === itemId);
     const existing = cart.find(c => c.id === itemId);
 
     if (existing) {
-        existing.qty++;
+        existing.qty++;  // Incrementa cantidad
     } else {
-        cart.push({ ...item, qty: 1 });
+        cart.push({ ...item, qty: 1 });  // Agrega nuevo
     }
 
     updateCart();
     alert('¡Agregado al pedido!');
 }
 
-// Update cart
+// ============================================
+// FUNCIÓN: updateCart
+// ============================================
+// Qué: Actualiza la vista del carrito
 function updateCart() {
+    // Actualiza contador
     cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
 
+    // Renderiza items
     if (cart.length === 0) {
         cartItems.innerHTML = '<p class="empty-cart">Tu carrito está vacío</p>';
     } else {
@@ -288,30 +332,40 @@ function updateCart() {
         `).join('');
     }
 
+    // Actualiza total
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     cartTotal.textContent = `$${total.toFixed(2)}`;
 }
 
-// Update quantity
+// ============================================
+// FUNCIÓN: updateQty
+// ============================================
+// Qué: Actualiza la cantidad de un item
 function updateQty(itemId, change) {
     const item = cart.find(i => i.id === itemId);
     if (item) {
         item.qty += change;
         if (item.qty <= 0) {
-            removeFromCart(itemId);
+            removeFromCart(itemId);  // Elimina si cantidad <= 0
         } else {
             updateCart();
         }
     }
 }
 
-// Remove from cart
+// ============================================
+// FUNCIÓN: removeFromCart
+// ============================================
+// Qué: Elimina un item del carrito
 function removeFromCart(itemId) {
     cart = cart.filter(i => i.id !== itemId);
     updateCart();
 }
 
-// Handle reservation
+// ============================================
+// FUNCIÓN: handleReservation
+// ============================================
+// Qué: Procesa el formulario de reservación
 function handleReservation(e) {
     e.preventDefault();
     const formData = new FormData(e.target);

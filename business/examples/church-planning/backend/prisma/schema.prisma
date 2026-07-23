@@ -1,209 +1,345 @@
+// ============================================
+// GENERADOR DE CLIENTE PRISMA
+// Qué: Genera el cliente Prisma para conectarse a la BD
+// Cómo: Usa el proveedor prisma-client-js
+// Conecta: Con las funciones de PrismaClient en routes/
+// ============================================
 generator client {
   provider = "prisma-client-js"
 }
 
+// ============================================
+// CONEXIÓN A BASE DE DATOS
+// Qué: Define la conexión a PostgreSQL
+// Cómo: Lee la URL desde variables de entorno (.env)
+// Conecta: Con process.env.DATABASE_URL en server.ts
+// ============================================
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ============================================
+// MODELO: USER (Usuarios)
+// Qué: Almacena información de cada persona del sistema
+// Cómo: Campos básicos de autenticación + relaciones con ministerios
+// Conecta: Con MinistryRole (via UserMinistryRole), Service (via ServiceTeam),
+//          Song (via updatedBy), File (via uploadedBy), Notification
+// ============================================
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  phone     String?
-  password  String
-  isAdmin   Boolean  @default(false)
-  isActive  Boolean  @default(true)
-  fcmToken  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())  // ID único generado automáticamente (UUID v4)
+  name      String                          // Nombre completo del usuario
+  email     String   @unique                // Email único para login (no se repite)
+  phone     String?                         // Teléfono opcional para notificaciones SMS
+  password  String                          // Contraseña hasheada con bcrypt (nunca en texto plano)
+  isAdmin   Boolean  @default(false)        // Si true, tiene permisos de admin total
+  isActive  Boolean  @default(true)         // Si false, usuario desactivado (no puede login)
+  fcmToken  String?                         // Token Firebase Cloud Messaging para push notifications
+  createdAt DateTime @default(now())        // Fecha de creación (se genera automáticamente)
+  updatedAt DateTime @updatedAt             // Fecha de última actualización (se actualiza solo)
 
-  ministryRoles     UserMinistryRole[]
-  serviceTeam       ServiceTeam[]
-  serviceSegments   ServiceSegment[]
-  positionRequests  PositionRequest[]
-  songs             Song[]
-  songHistory       SongHistory[]
-  files             File[]
-  notifications     Notification[]
+  // === RELACIONES ===
+  // Un usuario puede tener múltiples roles en múltiples ministerios
+  ministryRoles     UserMinistryRole[]      // Conecta: UserMinistryRole.userId → User.id
+  // Un usuario puede estar asignado a múltiples servicios
+  serviceTeam       ServiceTeam[]           // Conecta: ServiceTeam.userId → User.id
+  // Un usuario puede ser responsable de segmentos del culto
+  serviceSegments   ServiceSegment[]        // Conecta: ServiceSegment.responsibleId → User.id
+  // Un usuario puede recibir solicitudes de posiciones
+  positionRequests  PositionRequest[]       // Conecta: PositionRequest.userId → User.id
+  // Un usuario puede haber actualizado canciones
+  songs             Song[]                  // Conecta: Song.updatedById → User.id
+  // Un usuario puede tener historial de cambios en canciones
+  songHistory       SongHistory[]           // Conecta: SongHistory.modifiedById → User.id
+  // Un usuario puede subir archivos
+  files             File[]                  // Conecta: File.uploadedById → User.id
+  // Un usuario recibe notificaciones
+  notifications     Notification[]          // Conecta: Notification.userId → User.id
 }
 
+// ============================================
+// MODELO: MINISTRY (Ministerios)
+// Qué: Define los grupos de trabajo (Alabanza, Danzas, Producción, etc.)
+// Cómo: Lista configurable de ministerios activos/inactivos
+// Conecta: Con MinistryRole (roles dentro del ministerio),
+//          UserMinistryRole (personas asignadas), ServiceTeam, ServiceSegment
+// ============================================
 model Ministry {
-  id        String   @id @default(uuid())
-  name      String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())  // ID único del ministerio
+  name      String                          // Nombre: "Alabanza", "Danzas", "Producción"
+  isActive  Boolean  @default(true)         // Si false, ministerio desactivado (no aparece en selects)
+  createdAt DateTime @default(now())        // Fecha de creación
+  updatedAt DateTime @updatedAt             // Última actualización
 
-  roles            MinistryRole[]
-  userMinistryRoles UserMinistryRole[]
-  serviceSegments  ServiceSegment[]
-  serviceTeam      ServiceTeam[]
-  files            File[]
+  // === RELACIONES ===
+  // Un ministerio tiene múltiples roles (ej: Alabanza → Vocalista, Batería, Bajo)
+  roles            MinistryRole[]           // Conecta: MinistryRole.ministryId → Ministry.id
+  // Personas asignadas a este ministerio con sus roles
+  userMinistryRoles UserMinistryRole[]      // Conecta: UserMinistryRole.ministryId → Ministry.id
+  // Segmentos del culto que pertenecen a este ministerio
+  serviceSegments  ServiceSegment[]         // Conecta: ServiceSegment.ministryId → Ministry.id
+  // Miembros del equipo de servicio en este ministerio
+  serviceTeam      ServiceTeam[]            // Conecta: ServiceTeam.ministryId → Ministry.id
+  // Archivos subidos por este ministerio
+  files            File[]                   // Conecta: File.ministryId → Ministry.id
 }
 
+// ============================================
+// MODELO: MINISTRY_ROLE (Roles dentro de ministerios)
+// Qué: Define roles específicos dentro de cada ministerio
+// Cómo: Cada ministerio tiene sus propios roles configurables
+// Conecta: Con UserMinistryRole (personas con este rol),
+//          ServiceTeam (asignaciones), PositionRequest (solicitudes)
+// ============================================
 model MinistryRole {
-  id          String   @id @default(uuid())
-  name        String
-  isActive    Boolean  @default(true)
-  ministryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String   @id @default(uuid())  // ID único del rol
+  name        String                          // Nombre: "Vocalista", "Batería", "Sonido"
+  isActive    Boolean  @default(true)         // Si false, rol desactivado
+  ministryId  String                          // FK: ministerio al que pertenece este rol
+  createdAt   DateTime @default(now())        // Fecha de creación
+  updatedAt   DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
+  // El ministerio al que pertenece este rol
   ministry         Ministry             @relation(fields: [ministryId], references: [id])
-  userMinistryRoles UserMinistryRole[]
-  serviceTeam      ServiceTeam[]
-  positionRequests PositionRequest[]
+  // Personas que tienen este rol en el ministerio
+  userMinistryRoles UserMinistryRole[]   // Conecta: UserMinistryRole.ministryRoleId → MinistryRole.id
+  // Asignaciones de equipo que usan este rol
+  serviceTeam      ServiceTeam[]        // Conecta: ServiceTeam.ministryRoleId → MinistryRole.id
+  // Solicitudes de posiciones para este rol
+  positionRequests PositionRequest[]    // Conecta: PositionRequest.ministryRoleId → MinistryRole.id
 }
 
+// ============================================
+// MODELO: USER_MINISTRY_ROLE (Relación Persona-Ministerio-Rol)
+// Qué: Tabla pivote que conecta usuarios con ministerios y roles
+// Cómo: Permite que una persona tenga múltiples roles en múltiples ministerios
+// Conecta: User ↔ Ministry ↔ MinistryRole (relación muchos a muchos)
+//          Con constraint @@unique para evitar duplicados
+// ============================================
 model UserMinistryRole {
-  id              String        @id @default(uuid())
-  userId          String
-  ministryId      String
-  ministryRoleId  String
-  isLeader        Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id              String        @id @default(uuid())  // ID único de la asignación
+  userId          String                            // FK: usuario asignado
+  ministryId      String                            // FK: ministerio
+  ministryRoleId  String                            // FK: rol dentro del ministerio
+  isLeader        Boolean       @default(false)     // Si true, es líder del ministerio (permisos limitados)
+  createdAt       DateTime      @default(now())     // Fecha de asignación
+  updatedAt       DateTime      @updatedAt          // Última actualización
 
-  user         User          @relation(fields: [userId], references: [id])
-  ministry     Ministry      @relation(fields: [ministryId], references: [id])
-  ministryRole MinistryRole  @relation(fields: [ministryRoleId], references: [id])
+  // === RELACIONES ===
+  user         User          @relation(fields: [userId], references: [id])         // Usuario asignado
+  ministry     Ministry      @relation(fields: [ministryId], references: [id])     // Ministerio
+  ministryRole MinistryRole  @relation(fields: [ministryRoleId], references: [id]) // Rol asignado
 
+  // Constraint: Un usuario solo puede tener un rol único por ministerio
+  // Evita duplicados como "Juan como Vocalista en Alabanza" dos veces
   @@unique([userId, ministryId, ministryRoleId])
 }
 
+// ============================================
+// MODELO: SERVICE (Servicios/Cultos)
+// Qué: Almacena cada servicio o culto programado
+// Cómo: Fecha, hora, tipo y estado del servicio
+// Conecta: Con ServiceSegment (orden del culto), ServiceTeam (equipo),
+//          Song (set list), File (archivos), PositionRequest (solicitudes)
+// ============================================
 model Service {
-  id          String   @id @default(uuid())
-  title       String
-  date        DateTime
-  time        String
-  type        String   @default("worship")
-  status      String   @default("planned")
-  notes       String?
-  createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String   @id @default(uuid())  // ID único del servicio
+  title       String                          // Título: "Culto Dominical", "Noche de Adoración"
+  date        DateTime                        // Fecha del servicio (YYYY-MM-DD)
+  time        String                          // Hora: "10:00 AM", "18:00"
+  type        String   @default("worship")    // Tipo: "worship", "youth", "special"
+  status      String   @default("planned")    // Estado: "planned", "confirmed", "finished"
+  notes       String?                         // Notas generales del servicio
+  createdBy   String                          // FK: admin que creó el servicio
+  createdAt   DateTime @default(now())        // Fecha de creación
+  updatedAt   DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
+  // Admin que creó el servicio
   creator        User              @relation(fields: [createdBy], references: [id])
-  segments       ServiceSegment[]
-  team           ServiceTeam[]
-  positionRequests PositionRequest[]
-  songs          Song[]
-  files          File[]
+  // Segmentos del orden del culto (Alabanza, Ofrenda, Predicación, etc.)
+  segments       ServiceSegment[]  // Conecta: ServiceSegment.serviceId → Service.id
+  // Equipo asignado al servicio
+  team           ServiceTeam[]     // Conecta: ServiceTeam.serviceId → Service.id
+  // Solicitudes de posiciones/instrumentos
+  positionRequests PositionRequest[] // Conecta: PositionRequest.serviceId → Service.id
+  // Set list musical
+  songs          Song[]            // Conecta: Song.serviceId → Service.id
+  // Archivos subidos (ayudas de predicación, partituras, etc.)
+  files          File[]            // Conecta: File.serviceId → Service.id
 }
 
+// ============================================
+// MODELO: SERVICE_SEGMENT (Segmentos del orden del culto)
+// Qué: Define el orden de elementos dentro de un servicio
+// Cómo: Lista ordenada con duración estimada y ministerio responsable
+// Conecta: Con Service (servicio padre), Ministry (ministerio responsable),
+//          User (persona responsable del segmento)
+// ============================================
 model ServiceSegment {
-  id            String   @id @default(uuid())
-  serviceId     String
-  order         Int
-  title         String
-  durationMin   Int?
-  notes         String?
-  ministryId    String?
-  responsibleId String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String   @id @default(uuid())  // ID único del segmento
+  serviceId     String                          // FK: servicio al que pertenece
+  order         Int                             // Orden: 1=Primero, 2=Segundo, etc.
+  title         String                          // Título: "Alabanza", "Ofrenda", "Predicación"
+  durationMin   Int?                            // Duración estimada en minutos (opcional)
+  notes         String?                         // Notas específicas del segmento
+  ministryId    String?                         // FK: ministerio responsable (opcional)
+  responsibleId String?                         // FK: persona responsable (opcional)
+  createdAt     DateTime @default(now())        // Fecha de creación
+  updatedAt     DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
   service      Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  ministry     Ministry?   @relation(fields: [ministryId], references: [id])
-  responsible  User?       @relation(fields: [responsibleId], references: [id])
+  // Si se elimina el servicio, se eliminan sus segmentos (Cascade)
+  ministry     Ministry?   @relation(fields: [ministryId], references: [id])   // Ministerio responsable
+  responsible  User?       @relation(fields: [responsibleId], references: [id]) // Persona responsable
 }
 
+// ============================================
+// MODELO: SERVICE_TEAM (Equipo del servicio)
+// Qué: Asigna personas a servicios con un ministerio y rol específico
+// Cómo: Registra el estado de confirmación de cada persona
+// Conecta: Con Service, User, Ministry, MinistryRole
+//          Con Notification (cuando cambia el estado)
+// ============================================
 model ServiceTeam {
-  id              String   @id @default(uuid())
-  serviceId       String
-  userId          String
-  ministryId      String
-  ministryRoleId  String
-  status          String   @default("pending")
-  note            String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String   @id @default(uuid())  // ID único de la asignación
+  serviceId       String                          // FK: servicio
+  userId          String                          // FK: persona asignada
+  ministryId      String                          // FK: ministerio
+  ministryRoleId  String                          // FK: rol/instrumento
+  status          String   @default("pending")    // Estado: "pending", "confirmed", "cannot_attend", "schedule_conflict"
+  note            String?                         // Nota: "Llego 15 min tarde", "Necesito salir antes"
+  createdAt       DateTime @default(now())        // Fecha de asignación
+  updatedAt       DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
   service      Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id])
-  ministry     Ministry     @relation(fields: [ministryId], references: [id])
-  ministryRole MinistryRole @relation(fields: [ministryRoleId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])         // Persona asignada
+  ministry     Ministry     @relation(fields: [ministryId], references: [id])     // Ministerio
+  ministryRole MinistryRole @relation(fields: [ministryRoleId], references: [id]) // Rol/instrumento
 
+  // Constraint: Una persona solo puede tener un rol por servicio
+  // Evita "Juan como Vocalista" dos veces en el mismo servicio
   @@unique([serviceId, userId, ministryRoleId])
 }
 
+// ============================================
+// MODELO: POSITION_REQUEST (Solicitudes de posiciones/instrumentos)
+// Qué: Solicita músicos o personas para posiciones específicas
+// Cómo: El director de alabanza envía solicitud → persona acepta/rechaza
+// Conecta: Con Service, MinistryRole (posición solicitada),
+//          User (persona solicitada), Notification (push con botones)
+// ============================================
 model PositionRequest {
-  id              String   @id @default(uuid())
-  serviceId       String
-  ministryRoleId  String
-  userId          String?
-  status          String   @default("pending")
-  note            String?
-  requestedAt     DateTime @default(now())
-  respondedAt     DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String   @id @default(uuid())  // ID único de la solicitud
+  serviceId       String                          // FK: servicio
+  ministryRoleId  String                          // FK: posición/instrumento solicitado
+  userId          String?                         // FK: persona solicitada (null = solicitud abierta)
+  status          String   @default("pending")    // Estado: "pending", "accepted", "rejected"
+  note            String?                         // Nota de la respuesta (opcional)
+  requestedAt     DateTime @default(now())        // Fecha de solicitud
+  respondedAt     DateTime?                       // Fecha de respuesta (null si no ha respondido)
+  createdAt       DateTime @default(now())        // Fecha de creación
+  updatedAt       DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
   service      Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  ministryRole MinistryRole @relation(fields: [ministryRoleId], references: [id])
-  user         User?        @relation(fields: [userId], references: [id])
+  ministryRole MinistryRole @relation(fields: [ministryRoleId], references: [id]) // Posición solicitada
+  user         User?        @relation(fields: [userId], references: [id])         // Persona solicitada
 }
 
+// ============================================
+// MODELO: SONG (Canciones del set list)
+// Qué: Almacena las canciones del servicio con tono, letras y partituras
+// Cómo: Lista ordenada de canciones con metadatos musicales
+// Conecta: Con Service (servicio), User (quien actualizó),
+//          SongHistory (historial de cambios)
+// ============================================
 model Song {
-  id            String   @id @default(uuid())
-  serviceId     String
-  order         Int
-  title         String
-  key           String?
-  lyricsUrl     String?
-  sheetMusicUrl String?
-  youtubeLink   String?
-  updatedById   String?
-  updatedAt     DateTime @updatedAt
-  createdAt     DateTime @default(now())
+  id            String   @id @default(uuid())  // ID único de la canción
+  serviceId     String                          // FK: servicio al que pertenece
+  order         Int                             // Orden en el set list: 1=Primera, 2=Segunda
+  title         String                          // Título: "Grande y Fuerte"
+  key           String?                         // Tono musical: "C", "Dm", "G#"
+  lyricsUrl     String?                         // URL del archivo de letra (PDF/imagen)
+  sheetMusicUrl String?                         // URL de la partitura (PDF/imagen)
+  youtubeLink   String?                         // Link de YouTube como referencia
+  updatedById   String?                         // FK: última persona que actualizó
+  updatedAt     DateTime @updatedAt             // Última actualización
+  createdAt     DateTime @default(now())        // Fecha de creación
 
+  // === RELACIONES ===
   service    Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  updatedBy  User?       @relation(fields: [updatedById], references: [id])
-  history    SongHistory[]
+  updatedBy  User?       @relation(fields: [updatedById], references: [id]) // Quien actualizó
+  history    SongHistory[]  // Historial de cambios en esta canción
 }
 
+// ============================================
+// MODELO: SONG_HISTORY (Historial de cambios en canciones)
+// Qué: Registra cada cambio de letra, partitura o tono
+// Cómo: Almacena el campo modificado, valor anterior y nuevo
+// Conecta: Con Song (canción modificada), User (quien modificó)
+//          Se usa para notificar a músicos cuando cambia el tono
+// ============================================
 model SongHistory {
-  id           String   @id @default(uuid())
-  songId       String
-  field        String
-  oldValue     String?
-  newValue     String?
-  modifiedById String?
-  createdAt    DateTime @default(now())
+  id           String   @id @default(uuid())  // ID único del cambio
+  songId       String                          // FK: canción modificada
+  field        String                          // Campo modificado: "key", "lyricsUrl", "sheetMusicUrl"
+  oldValue     String?                         // Valor anterior (null si es creación)
+  newValue     String?                         // Valor nuevo (null si se eliminó)
+  modifiedById String?                         // FK: persona que hizo el cambio
+  createdAt    DateTime @default(now())        // Fecha del cambio
 
+  // === RELACIONES ===
   song       Song @relation(fields: [songId], references: [id], onDelete: Cascade)
-  modifiedBy User? @relation(fields: [modifiedById], references: [id])
+  modifiedBy User? @relation(fields: [modifiedById], references: [id]) // Quien modificó
 }
 
+// ============================================
+// MODELO: FILE (Archivos del servicio)
+// Qué: Almacena referencia de archivos subidos (PDFs, imágenes, videos)
+// Cómo: Guarda solo metadata, el archivo real está en S3
+// Conecta: Con Service (servicio), Ministry (ministerio opcional),
+//          User (quien subió), S3 (almacenamiento real via presigned URLs)
+// ============================================
 model File {
-  id           String   @id @default(uuid())
-  serviceId    String
-  ministryId   String?
-  uploadedById String
-  name         String
-  type         String
-  url          String
-  size         Int
-  version      Int      @default(1)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           String   @id @default(uuid())  // ID único del archivo
+  serviceId    String                          // FK: servicio al que pertenece
+  ministryId   String?                         // FK: ministerio asociado (opcional)
+  uploadedById String                          // FK: persona que subió el archivo
+  name         String                          // Nombre original del archivo
+  type         String                          // Tipo: "pdf", "pptx", "image", "video", "audio"
+  url          String                          // URL completa del archivo en S3
+  size         Int                             // Tamaño en bytes
+  version      Int      @default(1)            // Versión: 1=primera, incrementa al re-subir
+  createdAt    DateTime @default(now())        // Fecha de subida
+  updatedAt    DateTime @updatedAt             // Última actualización
 
+  // === RELACIONES ===
   service    Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  ministry   Ministry?   @relation(fields: [ministryId], references: [id])
-  uploadedBy User        @relation(fields: [uploadedById], references: [id])
+  ministry   Ministry?   @relation(fields: [ministryId], references: [id])     // Ministerio (opcional)
+  uploadedBy User        @relation(fields: [uploadedById], references: [id])   // Quien subió
 }
 
+// ============================================
+// MODELO: NOTIFICATION (Notificaciones push)
+// Qué: Almacena notificaciones para cada usuario
+// Cómo: Se crea cuando hay cambios relevantes (nueva canción, cambio de estado, etc.)
+// Conecta: Con User (destinatario), Service/Song/PositionRequest (referencia)
+//          Se envía via Firebase Cloud Messaging (FCM)
+// ============================================
 model Notification {
-  id          String   @id @default(uuid())
-  userId      String
-  type        String
-  message     String
-  referenceId String?
-  referenceType String?
-  read        Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id          String   @id @default(uuid())  // ID único de la notificación
+  userId      String                          // FK: usuario destinatario
+  type        String                          // Tipo: "team_status_change", "song_key_change", "position_request"
+  message     String                          // Mensaje legible: "Juan no puede asistir al servicio..."
+  referenceId String?                         // ID del objeto referenciado (serviceId, songId, etc.)
+  referenceType String?                       // Tipo del objeto: "service", "song", "position_request"
+  read        Boolean  @default(false)        // Si true, notificación leída
+  createdAt   DateTime @default(now())        // Fecha de creación
 
-  user User @relation(fields: [userId], references: [id])
+  // === RELACIONES ===
+  user User @relation(fields: [userId], references: [id]) // Usuario destinatario
 }

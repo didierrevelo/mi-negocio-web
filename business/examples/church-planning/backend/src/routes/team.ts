@@ -1,3 +1,10 @@
+// ============================================
+// RUTAS DE EQUIPO Y ASIGNACIONES
+// Módulo: Team
+// Responsabilidad: Asignar personas a servicios, actualizar estados, solicitudes de posiciones
+// Escalabilidad: Estados con notificaciones, solicitudes con aceptar/rechazar
+// ============================================
+
 import express from 'express';
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
@@ -5,7 +12,15 @@ import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 
+// ============================================
 // GET /team/:serviceId
+// ============================================
+// Qué: Obtiene el equipo de un servicio agrupado por ministerio
+// Cómo: Consulta ServiceTeam → agrupa por ministry.name
+// Conecta:
+//   - Input: serviceId (parámetro URL)
+//   - Output: { "Alabanza": { ministry, members[] }, "Producción": {...} }
+//   - Frontend: mobile/src/screens/ServiceDetailScreen.tsx
 router.get('/:serviceId', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const team = await prisma.serviceTeam.findMany({
@@ -17,7 +32,7 @@ router.get('/:serviceId', authenticate, async (req: AuthRequest, res: express.Re
       }
     });
 
-    // Group by ministry
+    // Agrupa por ministerio para la vista
     const grouped = team.reduce((acc: any, member) => {
       const ministryName = member.ministry.name;
       if (!acc[ministryName]) {
@@ -33,7 +48,15 @@ router.get('/:serviceId', authenticate, async (req: AuthRequest, res: express.Re
   }
 });
 
+// ============================================
 // POST /team/:serviceId
+// ============================================
+// Qué: Asigna una persona al equipo de un servicio
+// Cómo: Crea registro en ServiceTeam con estado pendiente
+// Conecta:
+//   - Input: { userId, ministryId, ministryRoleId }
+//   - Output: Member creado
+//   - Security: Solo admin
 router.post('/:serviceId', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { userId, ministryId, ministryRoleId } = req.body;
@@ -58,7 +81,16 @@ router.post('/:serviceId', authenticate, requireAdmin, async (req: AuthRequest, 
   }
 });
 
+// ============================================
 // PATCH /team/:id/status
+// ============================================
+// Qué: Actualiza el estado de confirmación de una persona
+// Estados: pending → confirmed | cannot_attend | schedule_conflict
+// Conecta:
+//   - Input: { status, note }
+//   - Output: Member actualizado
+//   - Notificación: Si es "cannot_attend" o "schedule_conflict", notifica al admin
+//   - Frontend: Botones de confirmar/no puede en ServiceDetailScreen
 router.patch('/:id/status', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const { status, note } = req.body;
@@ -68,7 +100,8 @@ router.patch('/:id/status', authenticate, async (req: AuthRequest, res: express.
       data: { status, note }
     });
 
-    // Notify admin if status is negative
+    // Notifica al admin si el estado es negativo
+    // Conecta: Con schema.prisma (model Notification)
     if (status === 'cannot_attend' || status === 'schedule_conflict') {
       const service = await prisma.service.findUnique({
         where: { id: member.serviceId },
@@ -94,7 +127,10 @@ router.patch('/:id/status', authenticate, async (req: AuthRequest, res: express.
   }
 });
 
+// ============================================
 // DELETE /team/:id
+// ============================================
+// Qué: Elimina una persona del equipo del servicio
 router.delete('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     await prisma.serviceTeam.delete({ where: { id: req.params.id } });
@@ -104,7 +140,11 @@ router.delete('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: 
   }
 });
 
+// ============================================
 // GET /team/positions/:serviceId
+// ============================================
+// Qué: Lista las solicitudes de posiciones/instrumentos
+// Conecta: Con PositionRequest → MinistryRole → User
 router.get('/positions/:serviceId', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
     const positions = await prisma.positionRequest.findMany({
@@ -120,7 +160,14 @@ router.get('/positions/:serviceId', authenticate, async (req: AuthRequest, res: 
   }
 });
 
+// ============================================
 // POST /team/positions/:serviceId
+// ============================================
+// Qué: Crea una solicitud de posición/instrumento
+// Cómo: Asigna a persona específica o deja abierta
+// Conecta:
+//   - Input: { ministryRoleId, userId? }
+//   - Notificación: Si userId existe, notifica a la persona
 router.post('/positions/:serviceId', authenticate, requireAdmin, async (req: AuthRequest, res: express.Response) => {
   try {
     const { ministryRoleId, userId } = req.body;
@@ -137,7 +184,7 @@ router.post('/positions/:serviceId', authenticate, requireAdmin, async (req: Aut
       }
     });
 
-    // Notify user if assigned
+    // Notifica al usuario si fue asignado
     if (userId) {
       const service = await prisma.service.findUnique({
         where: { id: req.params.serviceId }
@@ -160,10 +207,16 @@ router.post('/positions/:serviceId', authenticate, requireAdmin, async (req: Aut
   }
 });
 
+// ============================================
 // PATCH /team/positions/:id/respond
+// ============================================
+// Qué: Responde a una solicitud de posición (aceptar/rechazar)
+// Conecta:
+//   - Input: { status: 'accepted' | 'rejected' }
+//   - Notificación: Notifica al admin de la respuesta
 router.patch('/positions/:id/respond', authenticate, async (req: AuthRequest, res: express.Response) => {
   try {
-    const { status } = req.body; // 'accepted' or 'rejected'
+    const { status } = req.body;
 
     const position = await prisma.positionRequest.update({
       where: { id: req.params.id },
@@ -173,7 +226,7 @@ router.patch('/positions/:id/respond', authenticate, async (req: AuthRequest, re
       }
     });
 
-    // Notify admin
+    // Notifica al admin
     const service = await prisma.service.findUnique({
       where: { id: position.serviceId }
     });
