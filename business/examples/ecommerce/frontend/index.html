@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Tienda de Tecnología</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">TechStore</a>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar productos..." id="searchInput">
+                <button id="searchBtn">🔍</button>
+            </div>
+            <div class="nav-actions">
+                <a href="#" class="nav-link">Categorías</a>
+                <a href="#" class="nav-link">Ofertas</a>
+                <button class="cart-btn" id="cartBtn">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <a href="#" class="btn btn-outline">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>La mejor tecnología al mejor precio</h1>
+                <p>Encuentra los últimos gadgets, computadoras y accesorios con envío gratis</p>
+                <a href="#products" class="btn btn-primary">Ver Productos</a>
+            </div>
+        </section>
+
+        <section class="categories">
+            <h2>Categorías</h2>
+            <div class="categories-grid">
+                <div class="category-card" data-category="laptops">
+                    <span class="category-icon">💻</span>
+                    <h3>Laptops</h3>
+                </div>
+                <div class="category-card" data-category="phones">
+                    <span class="category-icon">📱</span>
+                    <h3>Celulares</h3>
+                </div>
+                <div class="category-card" data-category="audio">
+                    <span class="category-icon">🎧</span>
+                    <h3>Audio</h3>
+                </div>
+                <div class="category-card" data-category="gaming">
+                    <span class="category-icon">🎮</span>
+                    <h3>Gaming</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="products" id="products">
+            <div class="products-header">
+                <h2>Productos Destacados</h2>
+                <div class="filters">
+                    <select id="categoryFilter">
+                        <option value="all">Todas las categorías</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="phones">Celulares</option>
+                        <option value="audio">Audio</option>
+                        <option value="gaming">Gaming</option>
+                    </select>
+                    <select id="sortFilter">
+                        <option value="featured">Destacados</option>
+                        <option value="price-low">Precio: Menor a Mayor</option>
+                        <option value="price-high">Precio: Mayor a Menor</option>
+                        <option value="newest">Más Recientes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Mi Carrito</h2>
+                <button class="close-btn" id="closeCart">×</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items loaded dynamically -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+                <button class="btn btn-primary btn-full" id="checkoutBtn">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>TechStore</h3>
+                <p>Tu tienda de tecnología de confianza</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces</h3>
+                <a href="#">Sobre Nosotros</a>
+                <a href="#">Contacto</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="social-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TechStore. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
