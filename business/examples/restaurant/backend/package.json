@@ -1,7 +1,7 @@
 {
-  "name": "techstore-api",
+  "name": "la-cucina-api",
   "version": "1.0.0",
-  "description": "API para tienda de tecnología TechStore",
+  "description": "API para restaurante La Cucina",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",

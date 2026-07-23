@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cucina - Restaurante Italiano</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">La Cucina</a>
+            <ul class="nav-links">
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#menu">Menú</a></li>
+                <li><a href="#about">Nosotros</a></li>
+                <li><a href="#reservations">Reservaciones</a></li>
+                <li><a href="#contact">Contacto</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="cart-btn" id="cartBtn">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <a href="#reservations" class="btn btn-primary">Reservar Mesa</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>La auténtica cocina italiana</h1>
+                <p>Sabores tradicionales con un toque moderno desde 1985</p>
+                <div class="hero-buttons">
+                    <a href="#menu" class="btn btn-primary">Ver Menú</a>
+                    <a href="#reservations" class="btn btn-outline">Reservar Mesa</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="menu-section">
+            <div class="container">
+                <h2 class="section-title">Nuestro Menú</h2>
+                <p class="section-subtitle">Descubre nuestros platos preparados con ingredientes frescos y recetas tradicionales</p>
+                
+                <div class="menu-categories">
+                    <button class="menu-cat-btn active" data-category="entradas">Entradas</button>
+                    <button class="menu-cat-btn" data-category="pasta">Pastas</button>
+                    <button class="menu-cat-btn" data-category="pizzas">Pizzas</button>
+                    <button class="menu-cat-btn" data-category="carnes">Carnes</button>
+                    <button class="menu-cat-btn" data-category="postres">Postres</button>
+                    <button class="menu-cat-btn" data-category="bebidas">Bebidas</button>
+                </div>
+
+                <div class="menu-grid" id="menuGrid">
+                    <!-- Menu items loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image">
+                        <div class="about-img-placeholder">👨‍🍳</div>
+                    </div>
+                    <div class="about-content">
+                        <h2>Nuestra Historia</h2>
+                        <p class="about-lead">Desde 1985, bringing the authentic flavors of Italy to your table</p>
+                        <p>Fundado por el Chef Antonio Moretti, La Cucina ha sido el hogar de sabores auténticos italianos durante más de tres décadas. Nuestra recetas han sido pasadas de generación en generación, manteniendo la tradición mientras abrazamos la innovación.</p>
+                        <p>Cada plato cuenta una historia, cada ingrediente es seleccionado cuidadosamente, y cada cliente es parte de nuestra familia.</p>
+                        <div class="about-stats">
+                            <div class="stat">
+                                <span class="stat-number">38+</span>
+                                <span class="stat-label">Años de Experiencia</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">50k+</span>
+                                <span class="stat-label">Clientes Felices</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">100+</span>
+                                <span class="stat-label">Platos Únicos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reservations" class="reservations-section">
+            <div class="container">
+                <h2 class="section-title">Reservar Mesa</h2>
+                <p class="section-subtitle">Asegura tu lugar para una experiencia gastronómica inolvidable</p>
+                
+                <form class="reservation-form" id="reservationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="resName">Nombre Completo</label>
+                            <input type="text" id="resName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resEmail">Email</label>
+                            <input type="email" id="resEmail" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="resPhone">Teléfono</label>
+                            <input type="tel" id="resPhone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resDate">Fecha</label>
+                            <input type="date" id="resDate" name="date" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="resTime">Hora</label>
+                            <select id="resTime" name="time" required>
+                                <option value="">Seleccionar hora</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="18:00">6:00 PM</option>
+                                <option value="19:00">7:00 PM</option>
+                                <option value="20:00">8:00 PM</option>
+                                <option value="21:00">9:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="resGuests">Número de Personas</label>
+                            <select id="resGuests" name="guests" required>
+                                <option value="">Seleccionar</option>
+                                <option value="1">1 persona</option>
+                                <option value="2">2 personas</option>
+                                <option value="3">3 personas</option>
+                                <option value="4">4 personas</option>
+                                <option value="5">5 personas</option>
+                                <option value="6">6 personas</option>
+                                <option value="7">7+ personas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="resNotes">Notas Especiales</label>
+                        <textarea id="resNotes" name="notes" rows="3" placeholder="Alergias, celebraciones, preferencias de mesa..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Confirmar Reservación</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Encuéntranos</h2>
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <div>
+                                <strong>Dirección</strong>
+                                <p>Av. Italia 1234, Ciudad de México</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <div>
+                                <strong>Teléfono</strong>
+                                <p>+52 55 1234 5678</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">✉️</span>
+                            <div>
+                                <strong>Email</strong>
+                                <p>info@lacucina.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕐</span>
+                            <div>
+                                <strong>Horario</strong>
+                                <p>Lun - Vie: 12:00 - 23:00</p>
+                                <p>Sáb - Dom: 11:00 - 24:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-map">
+                        <div class="map-placeholder">
+                            <span>🗺️</span>
+                            <p>Mapa interactivo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Tu Pedido</h3>
+            <button class="close-cart" id="closeCart">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p class="empty-cart">Tu carrito está vacío</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn btn-primary btn-full" id="checkoutBtn">Realizar Pedido</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>La Cucina</h3>
+                    <p>La auténtica experiencia italiana en el corazón de la ciudad.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Enlaces</h4>
+                    <a href="#menu">Menú</a>
+                    <a href="#about">Nosotros</a>
+                    <a href="#reservations">Reservaciones</a>
+                    <a href="#contact">Contacto</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Horario</h4>
+                    <p>Lunes a Viernes: 12:00 - 23:00</p>
+                    <p>Sábados y Domingos: 11:00 - 24:00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 La Cucina. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
